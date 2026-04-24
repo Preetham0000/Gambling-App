@@ -1,6 +1,8 @@
 CREATE DATABASE gambler_db;
 USE gambler_db;
 
+
+--USE CASE 1: GAMBLER PROFILE 
 CREATE TABLE gambler_profile (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -16,6 +18,8 @@ CREATE TABLE gambler_profile (
     is_active BOOLEAN DEFAULT TRUE
 );
 
+
+-- USE CASE 2: STAKE MANGEMENT 
 CREATE TABLE stake_transaction (
     id INT AUTO_INCREMENT PRIMARY KEY,
     gambler_id INT,
@@ -23,6 +27,21 @@ CREATE TABLE stake_transaction (
     amount DOUBLE,
     balance_after DOUBLE,
     bet_id VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (gambler_id) REFERENCES gambler_profile(id)
+);
+
+
+-- USE CASE 3: BETTING MECHANISM
+
+CREATE TABLE bet (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    gambler_id INT,
+    amount DOUBLE,
+    win_probability DOUBLE,
+    outcome VARCHAR(10),
+    stake_before DOUBLE,
+    stake_after DOUBLE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (gambler_id) REFERENCES gambler_profile(id)
 );
