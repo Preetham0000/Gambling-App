@@ -6,19 +6,20 @@ from app.strategies.random_outcome_strategy import RandomOutcomeStrategy
 
 class WinLossCalculator:
 
-    def __init__(self, outcome_strategy=None):
-        self.strategy = outcome_strategy or RandomOutcomeStrategy()
+    def __init__(self, strategy=None):
+        self.strategy = strategy or RandomOutcomeStrategy()
         self.totals = RunningTotals()
         self.stats = WinLossStatistics()
 
-    def play(self, bet_amount, stake, probability, odds_config):
+    def play(self, bet, stake, probability, odds):
+
         outcome = self.strategy.determine(probability)
 
         result = GameResult(
-            bet_amount,
+            bet,
             outcome,
             stake,
-            odds_config,
+            odds,
             probability
         )
 
@@ -27,12 +28,22 @@ class WinLossCalculator:
 
         return result
 
-    def get_summary(self):
+    def summary(self):
+
+        stats = self.stats.summary()
+
         return {
-            "totals": {
-                "profit": self.totals.net_profit,
-                "wins": self.totals.total_wins,
-                "losses": self.totals.total_losses
-            },
-            "stats": self.stats.summary()
+            "net_profit": self.totals.net_profit,
+            "total_winnings": self.totals.total_winnings,
+            "total_losses": self.totals.total_losses,
+            "profit_factor": self.totals.profit_factor(),
+            "win_rate": stats["win_rate"],
+            "wins": stats["wins"],
+            "losses": stats["losses"],
+            "avg_win": stats["avg_win"],
+            "avg_loss": stats["avg_loss"],
+            "largest_win": stats["largest_win"],
+            "largest_loss": stats["largest_loss"],
+            "max_win_streak": stats["max_win_streak"],
+            "max_loss_streak": stats["max_loss_streak"]
         }
