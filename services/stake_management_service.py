@@ -1,7 +1,7 @@
-from app.config.db_config import get_connection
-from app.repository.stake_repository import StakeRepository
-from app.models.transaction_type import TransactionType
-from app.models.stake_boundary import StakeBoundary
+from config.db_config import get_connection
+from repository.stake_repository import StakeRepository
+from models.transaction_type import TransactionType
+from models.stake_boundary import StakeBoundary
 
 class StakeManagementService:
 
@@ -137,3 +137,35 @@ class StakeManagementService:
             "losses": losses,
             "history": rows
         }
+
+    def get_current_stake(self, gambler_id):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT balance_after
+            FROM stake_transaction
+            WHERE gambler_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+        """, (gambler_id,))
+
+        row = cursor.fetchone()
+
+        conn.close()
+
+        return row[0] if row else 0
+
+
+    def update_stake(self, gambler_id, new_stake):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO stake_transaction
+            (gambler_id, transaction_type, amount, balance_after)
+            VALUES (%s, %s, %s, %s)
+        """, (gambler_id, "ADJUSTMENT", 0, new_stake))
+
+        conn.commit()
+        conn.close()

@@ -1,6 +1,6 @@
 import random
-from app.config.db_config import get_connection
-from app.models.bet import Bet
+from config.db_config import get_connection
+from models.bet import Bet
 
 class BettingService:
 

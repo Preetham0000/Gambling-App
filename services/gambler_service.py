@@ -1,11 +1,23 @@
-from app.config.db_config import get_connection
-from app.repository.gambler_repository import GamblerRepository
-from app.utils.validators import validate_min_stake
+from config.db_config import get_connection
+from repository.gambler_repository import GamblerRepository
+from utils.validators import validate_min_stake
 
 class GamblerProfileService:
 
     def __init__(self):
         self.repo = GamblerRepository()
+
+    def get_gambler(self, gambler_id):
+        """Get gambler profile by ID"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        gambler = self.repo.find_by_id(cursor, gambler_id)
+        
+        cursor.close()
+        conn.close()
+        
+        return gambler
 
     def create_gambler(self, name, email, initial_stake, win_th, loss_th):
         print("creating.......")
@@ -14,11 +26,12 @@ class GamblerProfileService:
         conn = get_connection()
         cursor = conn.cursor()
 
-        self.repo.create(cursor, (name, email, initial_stake, initial_stake, win_th, loss_th))
+        gambler_id = self.repo.create(cursor, (name, email, initial_stake, initial_stake, win_th, loss_th))
 
         conn.commit()
         cursor.close()
         conn.close()
+        return gambler_id
 
     def update_gambler(self, gambler_id, name=None, email=None):
         conn = get_connection()

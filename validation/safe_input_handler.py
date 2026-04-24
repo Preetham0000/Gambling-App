@@ -1,5 +1,5 @@
-from app.validation.input_validator import InputValidator
-from app.validation.validation_config import ValidationConfig
+from validation.input_validator import InputValidator
+from validation.validation_config import ValidationConfig
 
 
 class SafeInputHandler:

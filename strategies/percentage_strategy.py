@@ -1,4 +1,4 @@
-from app.strategies.base_strategy import BettingStrategy
+from strategies.base_strategy import BettingStrategy
 
 class PercentageStrategy(BettingStrategy):
     def __init__(self, percent):

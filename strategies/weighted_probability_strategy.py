@@ -1,5 +1,5 @@
 import random
-from app.strategies.outcome_base import OutcomeStrategy
+from strategies.outcome_base import OutcomeStrategy
 
 class WeightedProbabilityStrategy(OutcomeStrategy):
     def __init__(self, house_edge=0.05):

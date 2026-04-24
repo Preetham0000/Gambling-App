@@ -1,7 +1,7 @@
-from app.models.game_result import GameResult
-from app.models.running_totals import RunningTotals
-from app.models.win_loss_statistics import WinLossStatistics
-from app.strategies.random_outcome_strategy import RandomOutcomeStrategy
+from models.game_result import GameResult
+from models.running_totals import RunningTotals
+from models.win_loss_statistics import WinLossStatistics
+from strategies.random_outcome_strategy import RandomOutcomeStrategy
 
 
 class WinLossCalculator:

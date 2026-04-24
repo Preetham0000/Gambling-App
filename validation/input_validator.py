@@ -1,6 +1,6 @@
 import math
-from app.validation.validation_result import ValidationResult
-from app.validation.exceptions import *
+from validation.validation_result import ValidationResult
+from validation.exceptions import *
 
 
 class InputValidator:

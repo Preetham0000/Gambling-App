@@ -1,5 +1,5 @@
-CREATE DATABASE gambler_db;
-USE gambler_db;
+CREATE DATABASE gambling_app;
+USE gambling_app;
 
 CREATE TABLE gambler_profile (
     id INT AUTO_INCREMENT PRIMARY KEY,

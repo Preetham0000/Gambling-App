@@ -6,6 +6,7 @@ class GamblerRepository:
             (name, email, initial_stake, current_stake, win_threshold, loss_threshold)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, data)
+        return cursor.lastrowid
 
     def find_by_id(self, cursor, gambler_id):
         cursor.execute("SELECT * FROM gambler_profile WHERE id=%s", (gambler_id,))

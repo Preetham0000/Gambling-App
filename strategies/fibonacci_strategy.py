@@ -1,4 +1,4 @@
-from app.strategies.base_strategy import BettingStrategy
+from strategies.base_strategy import BettingStrategy
 
 class FibonacciStrategy(BettingStrategy):
     def __init__(self):
