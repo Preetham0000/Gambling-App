@@ -10,14 +10,14 @@ class OddsType(Enum):
 class OddsConfig:
     def __init__(self, odds_type: OddsType, value: float):
         self.odds_type = odds_type
-        self.value = value  # meaning depends on type
+        self.value = value  
 
     def payout(self, bet_amount, probability=None):
         if self.odds_type == OddsType.FIXED:
             return bet_amount * self.value
 
         if self.odds_type == OddsType.PROBABILITY_BASED:
-            # inverse of probability (e.g., p=0.5 -> 2x)
+            
             if not probability:
                 raise Exception("Probability required")
             return bet_amount * (1 / probability)

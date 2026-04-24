@@ -150,7 +150,7 @@ class SimpleGameEngine:
             return
 
         # Step 7: Execute bet
-        print("\n⟳ Processing bet...")
+        print("\n Processing bet...")
         import time
         time.sleep(0.5)  # Brief suspense effect
 
@@ -198,7 +198,7 @@ class SimpleGameEngine:
             except ValueError:
                 print("Invalid number.")
         
-        print(f"\n⟳ Playing {num_games} automatic games with ₹{bet} bet each...\n")
+        print(f"\n Playing {num_games} automatic games with ₹{bet} bet each...\n")
         import time
         time.sleep(1)
         

@@ -1,6 +1,4 @@
-from models.game_result import GameResult
-from models.running_totals import RunningTotals
-from models.win_loss_statistics import WinLossStatistics
+from models import GameResultRecord, WinLossStatistics
 from strategies.random_outcome_strategy import RandomOutcomeStrategy
 
 
@@ -8,42 +6,35 @@ class WinLossCalculator:
 
     def __init__(self, strategy=None):
         self.strategy = strategy or RandomOutcomeStrategy()
-        self.totals = RunningTotals()
         self.stats = WinLossStatistics()
 
     def play(self, bet, stake, probability, odds):
 
         outcome = self.strategy.determine(probability)
 
-        result = GameResult(
-            bet,
-            outcome,
-            stake,
-            odds,
-            probability
+        # Calculate payout
+        if outcome == "WIN":
+            payout = odds.payout(bet, probability)
+            stake_after = stake + payout
+        else:
+            payout = 0
+            stake_after = stake - bet
+
+        result = GameResultRecord(
+            bet_id=0,  # Will be set by database
+            gambler_id=0,  # Will be set by context
+            outcome=outcome,
+            payout_amount=payout,
+            net_change=stake_after - stake,
+            stake_before=stake,
+            stake_after=stake_after,
+            win_probability=probability,
+            created_at=""
         )
 
-        self.totals.update(result)
         self.stats.update(result)
 
         return result
 
     def summary(self):
-
-        stats = self.stats.summary()
-
-        return {
-            "net_profit": self.totals.net_profit,
-            "total_winnings": self.totals.total_winnings,
-            "total_losses": self.totals.total_losses,
-            "profit_factor": self.totals.profit_factor(),
-            "win_rate": stats["win_rate"],
-            "wins": stats["wins"],
-            "losses": stats["losses"],
-            "avg_win": stats["avg_win"],
-            "avg_loss": stats["avg_loss"],
-            "largest_win": stats["largest_win"],
-            "largest_loss": stats["largest_loss"],
-            "max_win_streak": stats["max_win_streak"],
-            "max_loss_streak": stats["max_loss_streak"]
-        }
+        return self.stats.summary()

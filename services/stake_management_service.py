@@ -1,52 +1,88 @@
 from config.db_config import get_connection
-from repository.stake_repository import StakeRepository
-from models.transaction_type import TransactionType
-from models.stake_boundary import StakeBoundary
+
 
 class StakeManagementService:
+    """
+    Simple stake validation and management service.
+    Validates stakes are within acceptable bounds.
+    """
+
+    # Stake boundaries
+    MIN_STAKE = 100.0
+    MAX_STAKE = 1000000.0
 
     def __init__(self):
-        self.repo = StakeRepository()
-        self.boundary = StakeBoundary(100, 10000)
+        """Initialize stake management service"""
+        pass
 
-    # INITIALIZE
+    def validate_stake(self, amount):
+        """
+        Validate if stake amount is within acceptable bounds.
+        Returns: True if valid, False otherwise
+        """
+        return self.MIN_STAKE <= amount <= self.MAX_STAKE
+
     def initialize_stake(self, gambler_id, amount):
-        status = self.boundary.validate(amount)
-        if status != "OK":
-            raise Exception("Invalid initial stake")
+        """
+        Initialize gambler's stake.
+        Validates amount is within bounds.
+        """
+        if not self.validate_stake(amount):
+            raise Exception(
+                f"Invalid stake. Must be between {self.MIN_STAKE} and {self.MAX_STAKE}"
+            )
 
+        # Update gambler's current_stake in database
         conn = get_connection()
         cursor = conn.cursor()
 
-        self.repo.insert_transaction(cursor, (
-            gambler_id,
-            TransactionType.INITIAL_STAKE.value,
-            amount,
-            amount,
-            None
-        ))
+        cursor.execute(
+            "UPDATE gambler_profile SET current_stake=%s WHERE id=%s",
+            (amount, gambler_id)
+        )
 
         conn.commit()
         cursor.close()
         conn.close()
 
-    # PROCESS BET
-    def process_bet(self, gambler_id, amount, won):
+    def process_bet_result(self, gambler_id, amount, won):
+        """
+        Process bet result and update gambler's stake.
+        Returns: New stake amount
+        """
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT current_stake FROM gambler_profile WHERE id=%s", (gambler_id,))
-        stake = cursor.fetchone()[0]
+        # Get current stake
+        cursor.execute(
+            "SELECT current_stake FROM gambler_profile WHERE id=%s",
+            (gambler_id,)
+        )
+        result = cursor.fetchone()
+        
+        if not result:
+            raise Exception(f"Gambler {gambler_id} not found")
+        
+        current_stake = result[0]
 
-        if stake < amount:
-            raise Exception("Insufficient balance")
-
+        # Calculate new stake
         if won:
-            stake += amount
-            t_type = TransactionType.BET_WIN.value
+            new_stake = current_stake + amount
         else:
-            stake -= amount
-            t_type = TransactionType.BET_LOSS.value
+            new_stake = current_stake - amount
+
+        # Update database
+        cursor.execute(
+            "UPDATE gambler_profile SET current_stake=%s WHERE id=%s",
+            (new_stake, gambler_id)
+        )
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return new_stake
+
 
         cursor.execute("UPDATE gambler_profile SET current_stake=%s WHERE id=%s", (stake, gambler_id))
 
