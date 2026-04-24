@@ -1,6 +1,6 @@
-from config.db_config import get_connection
-from repository.gambler_repository import GamblerRepository
-from utils.validators import validate_min_stake
+from app.config.db_config import get_connection
+from app.repository.gambler_repository import GamblerRepository
+from app.utils.validators import validate_min_stake
 
 class GamblerProfileService:
 
